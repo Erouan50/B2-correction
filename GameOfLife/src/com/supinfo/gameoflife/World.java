@@ -12,6 +12,10 @@ public class World {
     private int[][] cellsNeighbours;
 
     public World(int numberOfColumns, int numberOfRows) {
+        if (numberOfColumns < 0 || numberOfRows < 0) {
+            throw new IllegalArgumentException("You must give positives array sizes");
+        }
+
         cells = new Cell[numberOfRows][numberOfColumns];
         cellsNeighbours = new int[numberOfRows][numberOfColumns];
         Random random = new Random();
