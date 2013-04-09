@@ -7,6 +7,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
 
@@ -40,11 +42,8 @@ public class JdbcPlaceDao extends JdbcDao implements PlaceDao {
         try (PreparedStatement statement = getConnection().prepareStatement("SELECT id, name FROM places WHERE id = ?")) {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
-            Place place = new Place();
             if (resultSet.next()) {
-                place.setId(resultSet.getLong(1));
-                place.setName(resultSet.getString(2));
-                return place;
+                return toPlace(resultSet);
             } else {
                 return null;
             }
@@ -76,5 +75,26 @@ public class JdbcPlaceDao extends JdbcDao implements PlaceDao {
         } catch (SQLException e) {
             throw new RuntimeException("Unable to delete this place: " + place, e);
         }
+    }
+
+    @Override
+    public List<Place> findAllPlaces() {
+        try (PreparedStatement statement = getConnection().prepareStatement("SELECT id, name FROM places")) {
+            List<Place> places = new ArrayList<>();
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                places.add(toPlace(resultSet));
+            }
+            return places;
+        } catch (SQLException e) {
+            throw new RuntimeException("Unable to find all places");
+        }
+    }
+
+    private Place toPlace(ResultSet resultSet) throws SQLException {
+        Place place = new Place();
+        place.setId(resultSet.getLong(1));
+        place.setName(resultSet.getString(2));
+        return place;
     }
 }
