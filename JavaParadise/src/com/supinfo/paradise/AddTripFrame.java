@@ -11,7 +11,12 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
+import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.util.List;
 
 /**
@@ -23,6 +28,7 @@ public class AddTripFrame extends JFrame {
     private JComboBox<Place> destinationComboBox;
     private JTextField priceField;
     private JButton tripSubmit;
+    private JButton tripCancel;
     private PlaceDao placeDao;
 
     public AddTripFrame() {
@@ -36,22 +42,76 @@ public class AddTripFrame extends JFrame {
         destinationComboBox = new JComboBox<>(places.toArray(new Place[places.size()]));
         priceField = new JTextField();
         priceField.setPreferredSize(new Dimension(60, (int) priceField.getPreferredSize().getHeight()));
-        JLabel euroLabel = new JLabel("€");
         tripSubmit = new JButton("Add trip");
+        tripCancel = new JButton("Cancel");
 
-        JPanel rootPane = new JPanel();
-        rootPane.add(departureComboBox);
-        rootPane.add(destinationComboBox);
-        rootPane.add(priceField);
-        rootPane.add(euroLabel);
-        rootPane.add(tripSubmit);
+        JPanel rootPane = new JPanel(new BorderLayout());
+        JPanel topPanel = new JPanel(new GridBagLayout());
+
+        GridBagConstraints labelConstraints = buildLabelConstraints();
+        GridBagConstraints fieldConstraints = buildFieldConstraints();
+        GridBagConstraints comboBoxConstraints = buildComboBoxConstraints();
+
+        JLabel fromLabel = new JLabel("From: ");
+        topPanel.add(fromLabel, labelConstraints);
+        topPanel.add(departureComboBox, comboBoxConstraints);
+
+        incrementConstraintsGridY(labelConstraints, fieldConstraints, comboBoxConstraints);
+
+        JLabel toLabel = new JLabel("To: ");
+        topPanel.add(toLabel, labelConstraints);
+        topPanel.add(destinationComboBox, comboBoxConstraints);
+
+        incrementConstraintsGridY(labelConstraints, fieldConstraints, comboBoxConstraints);
+
+        JLabel priceLabel = new JLabel("Price: ");
+        topPanel.add(priceLabel, labelConstraints);
+        topPanel.add(priceField, fieldConstraints);
+
+        JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        bottomPanel.add(tripCancel);
+        bottomPanel.add(tripSubmit);
+
+        rootPane.add(topPanel, BorderLayout.NORTH);
+        rootPane.add(bottomPanel, BorderLayout.SOUTH);
 
         this.setTitle("Add trip");
-        this.setSize(260, 100);
+        this.setSize(260, 170);
         this.setMinimumSize(new Dimension(260, 100));
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.setLocationRelativeTo(null);
         this.setContentPane(rootPane);
         this.setVisible(true);
+    }
+
+    private void incrementConstraintsGridY(GridBagConstraints labelConstraints, GridBagConstraints fieldConstraints, GridBagConstraints comboBoxConstraints) {
+        labelConstraints.gridy++;
+        comboBoxConstraints.gridy++;
+        fieldConstraints.gridy++;
+    }
+
+    private GridBagConstraints buildComboBoxConstraints() {
+        GridBagConstraints comboBoxConstraints = new GridBagConstraints();
+        comboBoxConstraints.fill = GridBagConstraints.HORIZONTAL;
+        comboBoxConstraints.insets = new Insets(5, 5, 5, 5);
+        comboBoxConstraints.weightx = 2;
+        comboBoxConstraints.gridy = 0;
+        return comboBoxConstraints;
+    }
+
+    private GridBagConstraints buildFieldConstraints() {
+        GridBagConstraints fieldConstraints = new GridBagConstraints();
+        fieldConstraints.anchor = GridBagConstraints.WEST;
+        fieldConstraints.insets = new Insets(5, 5, 5, 5);
+        fieldConstraints.gridy = 0;
+        return fieldConstraints;
+    }
+
+    private GridBagConstraints buildLabelConstraints() {
+        GridBagConstraints labelConstraints = new GridBagConstraints();
+        labelConstraints.anchor = GridBagConstraints.EAST;
+        labelConstraints.insets = new Insets(5, 5, 5, 5);
+        labelConstraints.gridy = 0;
+        return labelConstraints;
     }
 }
