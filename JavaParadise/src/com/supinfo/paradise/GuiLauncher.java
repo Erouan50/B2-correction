@@ -1,5 +1,7 @@
 package com.supinfo.paradise;
 
+import com.supinfo.paradise.gui.AddTripFrame;
+
 /**
  * @author Antoine Rouaze <antoine.rouaze@zenika.com>
  */

@@ -1,8 +1,11 @@
-package com.supinfo.paradise;
+package com.supinfo.paradise.gui;
 
 import com.supinfo.paradise.dao.DaoFactory;
 import com.supinfo.paradise.dao.PlaceDao;
+import com.supinfo.paradise.dao.TripDao;
+import com.supinfo.paradise.gui.model.PlaceComboBoxModel;
 import com.supinfo.paradise.model.Place;
+import com.supinfo.paradise.model.Trip;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -17,6 +20,9 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -30,20 +36,23 @@ public class AddTripFrame extends JFrame {
     private JButton tripSubmit;
     private JButton tripCancel;
     private PlaceDao placeDao;
+    private TripDao tripDao;
 
     public AddTripFrame() {
         placeDao = DaoFactory.getPlaceDao();
+        tripDao = DaoFactory.getTripDao();
         init();
     }
 
     private void init() {
         List<Place> places = placeDao.findAllPlaces();
-        departureComboBox = new JComboBox<>(places.toArray(new Place[places.size()]));
-        destinationComboBox = new JComboBox<>(places.toArray(new Place[places.size()]));
+        departureComboBox = new JComboBox<>(new PlaceComboBoxModel(places));
+        destinationComboBox = new JComboBox<>(new PlaceComboBoxModel(places));
         priceField = new JTextField();
         priceField.setPreferredSize(new Dimension(60, (int) priceField.getPreferredSize().getHeight()));
         tripSubmit = new JButton("Add trip");
         tripCancel = new JButton("Cancel");
+        initListeners();
 
         JPanel rootPane = new JPanel(new BorderLayout());
         JPanel topPanel = new JPanel(new GridBagLayout());
@@ -113,5 +122,25 @@ public class AddTripFrame extends JFrame {
         labelConstraints.insets = new Insets(5, 5, 5, 5);
         labelConstraints.gridy = 0;
         return labelConstraints;
+    }
+
+    public void initListeners() {
+        tripSubmit.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Trip trip = new Trip();
+                trip.setDeparture((Place) departureComboBox.getSelectedItem());
+                trip.setDestination((Place) destinationComboBox.getSelectedItem());
+                trip.setPrice(new BigDecimal(priceField.getText()));
+                tripDao.createTrip(trip);
+            }
+        });
+        tripCancel.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                AddTripFrame.this.dispose();
+                System.exit(0);
+            }
+        });
     }
 }
