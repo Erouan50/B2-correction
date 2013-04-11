@@ -11,6 +11,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
@@ -132,7 +133,8 @@ public class AddTripFrame extends JFrame {
                 trip.setDeparture((Place) departureComboBox.getSelectedItem());
                 trip.setDestination((Place) destinationComboBox.getSelectedItem());
                 trip.setPrice(new BigDecimal(priceField.getText()));
-                tripDao.createTrip(trip);
+                Long id = tripDao.createTrip(trip);
+                JOptionPane.showConfirmDialog(AddTripFrame.this, "Trip added into DB with ID: " + id, "Message", JOptionPane.DEFAULT_OPTION);
             }
         });
         tripCancel.addActionListener(new ActionListener() {

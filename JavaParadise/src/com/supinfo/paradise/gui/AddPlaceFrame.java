@@ -6,6 +6,7 @@ import com.supinfo.paradise.model.Place;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
@@ -36,7 +37,8 @@ public class AddPlaceFrame extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 Place place = new Place();
                 place.setName(placeName.getText());
-                placeDao.createPlace(place);
+                Long id = placeDao.createPlace(place);
+                JOptionPane.showConfirmDialog(AddPlaceFrame.this, "Place added into DB with ID: " + id, "Message", JOptionPane.DEFAULT_OPTION);
             }
         });
 
